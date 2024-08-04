@@ -6,6 +6,7 @@ import userRouter from "./routes/userRoute.js";
 import "dotenv/config.js";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
+
 //app config
 const app = express();
 const port = process.env.PORT || 4000;
@@ -28,6 +29,6 @@ app.get("/", (req, res) => {
   res.json({ message: "Server started" });
 });
 
-app.listen(process.env.port, () => {
-  console.log(`Server Strated on http://localhost:${port}`);
+app.listen(port, () => {
+  console.log(`Server Started on http://localhost:${port}`);
 });
