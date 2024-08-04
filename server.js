@@ -7,18 +7,18 @@ import "dotenv/config.js";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 
-//app config
+// App config
 const app = express();
 const port = process.env.PORT || 4000;
 
-//middleware
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-// db connection
+// DB connection
 connectDb();
 
-// api endpoints
+// API endpoints
 app.use("/api/food", foodRouter);
 app.use("/images", express.static("uploads"));
 app.use("/api/user", userRouter);
