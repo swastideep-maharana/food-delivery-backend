@@ -13,6 +13,8 @@ const foodSchema = new mongoose.Schema(
   }
 );
 
+foodSchema.index({ category: 1 });
+
 const Food = mongoose.model("Food", foodSchema);
 
 export default Food;

@@ -31,11 +31,23 @@ const addFood = async (req, res) => {
 // all food list
 const listFood = async (req, res) => {
   try {
-    const foods = await foodModel.find({});
-    res.json({ success: true, data: foods });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const foods = await foodModel.find({}).skip(skip).limit(limit).lean();
+    const total = await foodModel.countDocuments();
+    res.json({
+      success: true,
+      data: foods,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error" });
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error fetching food list" });
   }
 };
 
@@ -43,13 +55,19 @@ const listFood = async (req, res) => {
 const removeFood = async (req, res) => {
   try {
     const food = await foodModel.findById(req.body.id);
+    if (!food) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Food not found" });
+    }
     fs.unlink(`uploads/${food.image}`, () => {});
-
     await foodModel.findByIdAndDelete(req.body.id);
     res.json({ success: true, message: "Food Removed" });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error" });
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error removing food item" });
   }
 };
 

@@ -10,5 +10,7 @@ const orderSchema = new mongooes.Schema({
   payment: { type: Boolean, default: false },
 });
 
+orderSchema.index({ userId: 1 });
+
 const orderModel = mongooes.model.order || mongooes.model("order", orderSchema);
 export default orderModel;

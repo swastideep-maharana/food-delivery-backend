@@ -73,22 +73,34 @@ const verifyOrder = async (req, res) => {
 //user orders  for frontend
 const userOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find({ userId: req.body.userId });
+    const orders = await orderModel.find({ userId: req.body.userId }).lean();
     res.json({ success: true, data: orders });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error" });
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error fetching user orders" });
   }
 };
 
 //Listing orders for admin panel
 const listOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find({});
-    res.json({ success: true, data: orders });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const orders = await orderModel.find({}).skip(skip).limit(limit).lean();
+    const total = await orderModel.countDocuments();
+    res.json({
+      success: true,
+      data: orders,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error" });
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error fetching orders" });
   }
 };
 
